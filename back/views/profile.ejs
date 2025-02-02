@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profile Picture Upload</title>
+</head>
+<body>
+  <h1>Upload your Profile Picture</h1>
+  <form action="/api/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="profilePicture">
+    <button type="submit">Upload</button>
+  </form>
+  
+  <div id="imageContainer"></div>
+
+  <script>
+    const form = document.querySelector('form');
+    const imageContainer = document.getElementById('imageContainer');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data.imageUrl); // The URL of the uploaded image
+          
+          // Display the uploaded image
+          const img = document.createElement('img');
+          img.src = data.imageUrl;
+          imageContainer.appendChild(img);
+        } else {
+          console.error('Image upload failed');
+        }
+      } catch (error) {
+        console.error('Error during upload:', error);
+      }
+    });
+  </script>
+</body>
+</html>
+
