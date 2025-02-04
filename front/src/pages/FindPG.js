@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import config from '../config/config';
 
 const FindPG = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllListings = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/listings');
+        const response = await fetch(`${config.API_URL}/api/listings/accommodations`);
         if (!response.ok) {
           throw new Error('Failed to fetch listings');
         }
 
         const data = await response.json();
         if (data.success) {
-          setListings(data.listings);
+          setListings(data.listings || []);
         }
       } catch (error) {
         console.error('Error fetching listings:', error);

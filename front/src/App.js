@@ -11,8 +11,6 @@ import theme from './styles/theme';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-// import Toast from './components/common/Toast';
-import PhoneAuth from './components/PhoneAuth';
 
 // Pages
 import Home from './pages/Home';
@@ -59,7 +57,6 @@ const AppRoutes = () => {
       <Route path="/restaurants/:id" element={<RestaurantDetail />} />
       <Route path="/shops" element={<Shops />} />
       <Route path="/shops/:id" element={<ShopDetail />} />
-      <Route path="/verify-phone" element={<PhoneAuth />} />
       
       {/* Protected Routes */}
       <Route 

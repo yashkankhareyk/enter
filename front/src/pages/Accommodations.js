@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import config from '../config/config';
-import MapComponent from '../components/MapComponent';
 
 const Accommodations = () => {
   const [listings, setListings] = useState([]);
@@ -73,12 +72,6 @@ const Accommodations = () => {
         <Subtitle>Find comfortable PG accommodations near your campus</Subtitle>
       </Header>
 
-      {/* Map Section */}
-      <MapSection>
-        <SectionTitle>Browse Locations</SectionTitle>
-        {listings.length > 0 && <MapComponent listings={listings} />}
-      </MapSection>
-
       {/* Existing listings grid */}
       {listings.length === 0 ? (
         <NoListings>No accommodations available at the moment.</NoListings>
@@ -102,15 +95,7 @@ const Accommodations = () => {
                   <Detail>Room Type: {listing.roomType}</Detail>
                   <Detail>Available Rooms: {listing.availableRooms}</Detail>
                 </ListingDetails>
-                {listing.location && (
-                  <LocationButton onClick={() => {
-                    if (listing.latitude && listing.longitude) {
-                      navigate(`/pg/${listing._id}#location`);
-                    }
-                  }}>
-                    📍 View Location
-                  </LocationButton>
-                )}
+                
                 <ViewButton onClick={() => navigate(`/pg/${listing._id}`)}>
                   View Details
                 </ViewButton>

@@ -154,6 +154,56 @@ router.get('/:type', async (req, res) => {
   }
 });
 
+// Add this route before other routes
+router.get('/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+    
+    // Log the received query for debugging
+    console.log('Received search query:', q);
+
+    // If query is empty or undefined, return all approved listings
+    if (!q || q.trim() === '') {
+      const allListings = await AccommodationListing.find({ status: 'approved' })
+        .populate('owner', 'name email phone');
+      
+      return res.json({
+        success: true,
+        listings: allListings
+      });
+    }
+
+    // Decode the search query and clean it
+    const searchTerm = decodeURIComponent(q).trim();
+
+    // Search in accommodations with case-insensitive regex
+    const searchResults = await AccommodationListing.find({
+      status: 'approved',
+      $or: [
+        { title: { $regex: searchTerm, $options: 'i' } },
+        { location: { $regex: searchTerm, $options: 'i' } },
+        { description: { $regex: searchTerm, $options: 'i' } }
+      ]
+    }).populate('owner', 'name email phone');
+
+    // Log the results count for debugging
+    console.log(`Found ${searchResults.length} results for "${searchTerm}"`);
+
+    return res.json({
+      success: true,
+      listings: searchResults
+    });
+
+  } catch (error) {
+    console.error('Search error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error performing search',
+      error: error.message
+    });
+  }
+});
+
 // Create new listing
 router.post('/create/:type', auth, upload.array('images', 5), async (req, res) => {
   try {
@@ -455,6 +505,32 @@ router.get('/debug/:id', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get specific accommodation listing by ID
+router.get('/accommodations/:id', async (req, res) => {
+  try {
+    const listing = await AccommodationListing.findById(req.params.id)
+      .populate('owner', 'name email phone');
+    
+    if (!listing) {
+      return res.status(404).json({
+        success: false,
+        message: 'Listing not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      listing
+    });
+  } catch (error) {
+    console.error('Error fetching listing:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching listing details'
+    });
   }
 });
 

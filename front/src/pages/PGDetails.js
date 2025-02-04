@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
+import config from '../config/config';
 import ReviewSection from '../components/ReviewSection';
-import config from '../config/config.js';
-import MapComponent from '../components/MapComponent';
 
 const PGDetails = () => {
   const { id } = useParams();
@@ -15,54 +15,26 @@ const PGDetails = () => {
   const [imageLoading, setImageLoading] = useState(true);
 
   useEffect(() => {
-    const fetchListingDetails = async () => {
+    const fetchListing = async () => {
       try {
-        console.log('Fetching listing details for ID:', id);
-        // Validate ID format
-        if (!id || id.length !== 24) {
-          throw new Error('Invalid listing ID format');
-        }
-
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/listings/accommodations/${id}`);
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(`Failed to fetch listing details: ${errorData.message || response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('Received listing data:', data);
-        
-        if (data.success) {
-          setListing(data.listing);
+        const response = await axios.get(`${config.API_URL}/api/listings/accommodations/${id}`);
+        if (response.data.success) {
+          setListing(response.data.listing);
         } else {
-          throw new Error(data.message || 'Failed to fetch listing');
+          throw new Error(response.data.message || 'Failed to fetch listing');
         }
       } catch (error) {
-        console.error('Error fetching listing details:', error);
-        setError(error.message);
+        console.error('Error fetching listing:', error);
+        setError(error.response?.data?.message || 'Error fetching listing details');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchListingDetails();
-  }, [id]);
-
-  useEffect(() => {
-    console.log('Listing data:', listing);
-    console.log('Location data:', {
-      latitude: listing?.latitude,
-      longitude: listing?.longitude
-    });
-    
-    if (window.location.hash === '#location') {
-      const mapSection = document.getElementById('location-map');
-      if (mapSection) {
-        mapSection.scrollIntoView({ behavior: 'smooth' });
-      }
+    if (id) {
+      fetchListing();
     }
-  }, [listing]);
+  }, [id]);
 
   const handleImageChange = (index) => {
     setCurrentImageIndex(index);
@@ -181,17 +153,6 @@ const PGDetails = () => {
       {showContactDialog && <ContactDialog onClose={() => setShowContactDialog(false)} />}
 
       <ReviewSection listingId={listing._id} ownerId={listing.owner?._id} />
-
-      {listing.latitude && listing.longitude && (
-        <Section id="location-map">
-          <SectionTitle>Location</SectionTitle>
-          <MapComponent 
-            latitude={listing.latitude}
-            longitude={listing.longitude}
-            title={listing.title}
-          />
-        </Section>
-      )}
     </PageContainer>
   );
 };

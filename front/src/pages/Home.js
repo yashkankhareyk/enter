@@ -178,6 +178,15 @@ const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [featuredRestaurants, setFeaturedRestaurants] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate to search page with query parameter
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   useEffect(() => {
     const fetchFeaturedRestaurants = async () => {
@@ -221,8 +230,14 @@ const Home = () => {
           <h1>Find Your Perfect College Space</h1>
           <p>Student accommodations, dining options, and local services tailored for you</p>
           <SearchContainer>
-            <SearchInput placeholder="Enter location or college name" />
-            <SearchButton>Search</SearchButton>
+            <form onSubmit={handleSearch}>
+              <SearchInput 
+                placeholder="Enter location or college name" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <SearchButton type="submit">Search</SearchButton>
+            </form>
           </SearchContainer>
         </HeroContent>
       </HeroSection>

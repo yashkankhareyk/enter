@@ -11,47 +11,6 @@ const BusinessListingsManager = () => {
     // ... other existing fields
   });
 
-  const handleLocationInput = (e) => {
-    const input = e.target.value;
-    setFormData(prev => ({
-      ...prev,
-      location: input,
-      latitude: '',
-      longitude: ''
-    }));
-
-    if (input.includes('google.com/maps') || input.includes('maps.app.goo.gl')) {
-      try {
-        let coords;
-        if (input.includes('@')) {
-          // Extract coordinates from @lat,lng format
-          coords = input.split('@')[1].split(',');
-          // Take only the first two values (lat, lng)
-          const [lat, lng] = coords;
-          if (lat && lng) {
-            setFormData(prev => ({
-              ...prev,
-              latitude: lat,
-              longitude: lng.split('/')[0] // Remove any additional parameters
-            }));
-          }
-        } else if (input.includes('?q=')) {
-          coords = input.split('?q=')[1].split(',');
-          const [lat, lng] = coords;
-          if (lat && lng) {
-            setFormData(prev => ({
-              ...prev,
-              latitude: lat,
-              longitude: lng.split('&')[0] // Remove any additional parameters
-            }));
-          }
-        }
-      } catch (error) {
-        console.error('Error parsing Google Maps URL:', error);
-      }
-    }
-  };
-
   const validateForm = () => {
     if (!formData.title || !formData.description || !formData.location) {
       return false;
