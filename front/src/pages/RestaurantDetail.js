@@ -157,6 +157,7 @@ const RestaurantDetail = () => {
           </ContactButton>
           {showContactDialog && <ContactDialog onClose={() => setShowContactDialog(false)} />}
         </DetailsSection>
+        <ReviewSection listingId={listing._id} ownerId={listing.owner?._id} />
       </PageContainer>
     </ErrorBoundary>
   );
