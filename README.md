@@ -9,6 +9,12 @@ A web application for students to find and book PG accommodations near their cam
 - PG Listing Management
 - Booking System
 - Search and Filter PGs
+
+https://github.com/user-attachments/assets/49348042-c6ec-46c5-91be-bdef5ef4ecfb
+
+Video link for Demo:
+
+"https://youtu.be/LuTtcrg05Xc"
 - Review System
 - Profile Management
 
